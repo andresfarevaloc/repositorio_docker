@@ -1,0 +1,65 @@
+version: "3.8"
+
+services:
+
+  mariadb:
+    image: mariadb:latest
+    container_name: mariadb
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpass123
+      MYSQL_DATABASE: myappdb
+      MYSQL_USER: myuser
+      MYSQL_PASSWORD: mypass123
+    volumes:
+      - mariadb_data:/var/lib/mysql
+    networks:
+      - fullstack
+    restart: unless-stopped
+
+  wordpress:
+    image: wordpress:latest
+    container_name: wordpress
+    ports:
+      - "8080:80"
+    environment:
+      WORDPRESS_DB_HOST: mariadb:3306
+      WORDPRESS_DB_USER: myuser
+      WORDPRESS_DB_PASSWORD: mypass123
+      WORDPRESS_DB_NAME: myappdb
+    networks:
+      - fullstack
+    restart: unless-stopped
+
+  python-backend:
+    image: python:3.11-slim
+    container_name: backend
+    working_dir: /app
+    volumes:
+      - ./backend:/app
+    command: bash -c "pip install -r requirements.txt && uvicorn main:app --host 0.0.0.0 --port 8000"
+    ports:
+      - "8000:8000"
+    networks:
+      - fullstack
+    restart: unless-stopped
+
+  flutter-web:
+    image: cirrusci/flutter:latest
+    container_name: flutter
+    working_dir: /app
+    volumes:
+      - ./flutter:/app
+    command: bash -c "flutter config --enable-web && flutter run -d web-server --web-port 8500 --web-hostname=0.0.0.0"
+    ports:
+      - "8500:8500"
+    networks:
+      - fullstack
+    restart: unless-stopped
+
+volumes:
+  mariadb_data:
+
+networks:
+  fullstack:
+    name: fullstack
+    driver: bridge
