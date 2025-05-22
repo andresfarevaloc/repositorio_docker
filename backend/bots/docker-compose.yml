@@ -1,0 +1,56 @@
+version: "3.8"
+
+services:
+  aux_metal:
+    build:
+      context: ./aux_metal
+      dockerfile: ../Dockerfile
+    container_name: aux_metal
+    ports:
+      - "8011:8000"
+    networks:
+      - fullstack
+
+  operador_mdw:
+    build:
+      context: ./operador_mdw
+      dockerfile: ../Dockerfile
+    container_name: operador_mdw
+    ports:
+      - "8012:8000"
+    networks:
+      - fullstack
+
+  restaurante_el_sabor:
+    build:
+      context: ./restaurante_el_sabor
+      dockerfile: ../Dockerfile
+    container_name: restaurante_el_sabor
+    ports:
+      - "8013:8000"
+    networks:
+      - fullstack
+
+  taller_mecanico:
+    build:
+      context: ./taller_mecanico
+      dockerfile: ../Dockerfile
+    container_name: taller_mecanico
+    ports:
+      - "8014:8000"
+    networks:
+      - fullstack
+
+  tennis_shore:
+    build:
+      context: ./tennis_shore
+      dockerfile: ../Dockerfile
+    container_name: tennis_shore
+    ports:
+      - "8015:8000"
+    networks:
+      - fullstack
+
+networks:
+  fullstack:
+    external: true

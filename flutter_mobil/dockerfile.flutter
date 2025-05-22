@@ -1,0 +1,29 @@
+FROM ubuntu:22.04
+
+# Instala dependencias
+RUN apt-get update && apt-get install -y \
+  curl git unzip xz-utils zip libglu1-mesa openjdk-17-jdk wget bash \
+  && rm -rf /var/lib/apt/lists/*
+
+# Variables de entorno
+ENV ANDROID_SDK_ROOT=/opt/android-sdk
+ENV PATH=$PATH:/opt/flutter/bin:$ANDROID_SDK_ROOT/cmdline-tools/latest/bin:$ANDROID_SDK_ROOT/platform-tools:$ANDROID_SDK_ROOT/emulator
+
+# Instala Flutter
+RUN git clone https://github.com/flutter/flutter.git /opt/flutter -b stable
+
+# Acepta licencias y descarga Android SDK
+RUN mkdir -p $ANDROID_SDK_ROOT/cmdline-tools && \
+    cd $ANDROID_SDK_ROOT/cmdline-tools && \
+    wget https://dl.google.com/android/repository/commandlinetools-linux-11076708_latest.zip && \
+    unzip commandlinetools-linux-*.zip && \
+    mv cmdline-tools latest
+
+# Configura Android SDK
+RUN yes | sdkmanager --licenses && \
+    sdkmanager "platform-tools" "platforms;android-33" "build-tools;33.0.0" "system-images;android-33;google_apis;x86_64"
+
+# Instala dependencias de Flutter
+RUN flutter doctor
+
+WORKDIR /app

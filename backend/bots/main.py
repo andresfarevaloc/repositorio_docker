@@ -35,7 +35,3 @@ def read_root():
         return {"message": "Conexión con MariaDB OK 🚀"}
     except Exception as e:
         return {"error": str(e)}
-
-# Ruta POST para interacción del bot
-@app.post("/cpd/bot")
-def procesar_mensaje(entrada: MensajeEntrada):
